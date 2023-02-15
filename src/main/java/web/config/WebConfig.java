@@ -14,6 +14,7 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 @Configuration
 @EnableWebMvc
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @ComponentScan("web")
 public class WebConfig implements WebMvcConfigurer {
 

@@ -17,39 +17,39 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:db.properties")
+@PropertySource(value="classpath:db.properties")
 @EnableTransactionManagement
 @ComponentScan(value = "web")
 public class AppConfig {
-
     @Autowired
     private Environment env;
 
     @Bean
     public DataSource getDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(env.getProperty("db.driver"));
-        dataSource.setUrl(env.getProperty("db.url"));
-        dataSource.setUsername(env.getProperty("db.username"));
-        dataSource.setPassword(env.getProperty("db.password"));
+        dataSource.setUrl(env.getRequiredProperty("db.url"));
+        dataSource.setUsername(env.getRequiredProperty("db.username"));
+        dataSource.setPassword(env.getRequiredProperty("db.password"));
+        dataSource.setDriverClassName(env.getRequiredProperty("db.driver"));
+
         return dataSource;
     }
 
     @Bean
     public LocalContainerEntityManagerFactoryBean getEntityManager() {
+        LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
 
-        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
-        Properties props=new Properties();
+        Properties props = new Properties();
         props.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
         props.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
-        props.put("hibernate.dialect",env.getProperty("hibernate.dialect"));
+        props.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
 
-        entityManagerFactoryBean.setDataSource(getDataSource());
-        entityManagerFactoryBean.setPackagesToScan("web");
-        entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        entityManagerFactoryBean.setJpaProperties(props);
+        factoryBean.setDataSource(getDataSource());
+        factoryBean.setPackagesToScan("web");
+        factoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        factoryBean.setJpaProperties(props);
+        return factoryBean;
 
-        return entityManagerFactoryBean;
     }
 
     @Bean
